@@ -23,7 +23,7 @@ train_mode=args["mode"]
 
 # Set the train and validation directory paths
 train_directory = 'imds_small/train'
-valid_directory = 'imds_small/val'
+valid_directory = 'imds_small/test'
 # Set the model save path
 PATH="model.pth" 
 
@@ -47,7 +47,7 @@ image_transforms = {
         transforms.Normalize([0.485, 0.456, 0.406],
                              [0.229, 0.224, 0.225])
     ]),
-    'valid': transforms.Compose([
+    'test': transforms.Compose([
         transforms.Resize(size=256),
         transforms.CenterCrop(size=224),
         transforms.ToTensor(),
@@ -59,20 +59,20 @@ image_transforms = {
 # Load data from folders
 dataset = {
     'train': datasets.ImageFolder(root=train_directory, transform=image_transforms['train']),
-    'valid': datasets.ImageFolder(root=valid_directory, transform=image_transforms['valid'])
+    'test': datasets.ImageFolder(root=valid_directory, transform=image_transforms['test'])
 }
  
 # Size of train and validation data
 dataset_sizes = {
     'train':len(dataset['train']),
-    'valid':len(dataset['valid'])
+    'test':len(dataset['test'])
 }
 
 # Create iterators for data loading
 dataloaders = {
     'train':data.DataLoader(dataset['train'], batch_size=bs, shuffle=True,
                             num_workers=num_cpu, pin_memory=True, drop_last=True),
-    'valid':data.DataLoader(dataset['valid'], batch_size=bs, shuffle=True,
+    'test':data.DataLoader(dataset['test'], batch_size=bs, shuffle=True,
                             num_workers=num_cpu, pin_memory=True, drop_last=True)
 }
 
@@ -82,7 +82,7 @@ print("Classes:", class_names)
  
 # Print the train and validation data sizes
 print("Training-set size:",dataset_sizes['train'],
-      "\nValidation-set size:", dataset_sizes['valid'])
+      "\nValidation-set size:", dataset_sizes['test'])
 
 # Set default device as gpu, if available
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -170,7 +170,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=30):
         print('-' * 10)
 
         # Each epoch has a training and validation phase
-        for phase in ['train', 'valid']:
+        for phase in ['train', 'test']:
             if phase == 'train':
                 model.train()  # Set model to training mode
             else:
@@ -217,12 +217,12 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=30):
                 writer.add_scalar('Train/Accuracy', epoch_acc, epoch)
                 writer.flush()
             else:
-                writer.add_scalar('Valid/Loss', epoch_loss, epoch)
-                writer.add_scalar('Valid/Accuracy', epoch_acc, epoch)
+                writer.add_scalar('Test/Loss', epoch_loss, epoch)
+                writer.add_scalar('Test/Accuracy', epoch_acc, epoch)
                 writer.flush()
 
             # deep copy the model
-            if phase == 'valid' and epoch_acc > best_acc:
+            if phase == 'test' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
 
