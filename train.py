@@ -15,7 +15,7 @@ from matplotlib import pyplot as plt
 
 # Construct argument parser
 ap = argparse.ArgumentParser()
-ap.add_argument("--mode", required=True, help="Training mode: finetue/transfer/scratch")
+ap.add_argument("--mode", required=True, help="Training mode: finetune/transfer/scratch")
 args= vars(ap.parse_args())
 
 # Set training mode
