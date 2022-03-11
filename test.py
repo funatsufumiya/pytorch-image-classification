@@ -10,7 +10,6 @@ import argparse
 ap = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 ap.add_argument("--class_names", required=True, type=str, default="apple,banana,grape", help="class names")
 ap.add_argument("--model_path", type=str, default="models/resnet18.pth", help="Path to model")
-ap.add_argument("--train_dir", type=str, default="imds_small/train", help="Directory for training images")
 ap.add_argument("--test_dir", type=str, default="imds_small/test", help="Directory for validation images")
 args= vars(ap.parse_args())
 
@@ -28,8 +27,11 @@ model.eval()
 class_names=args["class_names"].split(",")
 
 # Retreive 9 random images from directory
-files=Path(IMDIR).resolve().glob('*.*')
+## print("imdir:", IMDIR)
+files=Path(IMDIR).resolve().glob('**/*.*')
+# print(list(files))
 images=random.sample(list(files), 9)
+## images=list(files)
 
 # Configure plots
 fig = plt.figure(figsize=(9,9))
@@ -55,10 +57,11 @@ with torch.no_grad():
          outputs = model(inputs)
          _, preds = torch.max(outputs, 1)    
          label=class_names[preds]
+         print("Image:",img,"Prediction:",label)
          plt.subplot(rows,cols,num+1)
          plt.title("Pred: "+label)
          plt.axis('off')
          plt.imshow(img)
-'''
-Sample run: python test.py test
-'''
+    
+    print("Saved test result to test_result.png")
+    plt.savefig('test_result.png')

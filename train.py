@@ -89,6 +89,7 @@ dataloaders = {
 # Class names or target labels
 class_names = dataset['train'].classes
 print("Classes:", class_names)
+print("Class names for test:", ",".join(class_names))
  
 # Print the train and validation data sizes
 print("Training-set size:",dataset_sizes['train'],
