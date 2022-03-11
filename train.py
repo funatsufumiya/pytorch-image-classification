@@ -24,6 +24,8 @@ ap.add_argument("--train_dir", type=str, default="imds_small/train", help="Direc
 ap.add_argument("--test_dir", type=str, default="imds_small/test", help="Directory for validation images")
 args= vars(ap.parse_args())
 
+print("args:",args)
+
 # Set training mode
 train_mode=args["mode"]
 
