@@ -16,23 +16,31 @@ from matplotlib import pyplot as plt
 # Construct argument parser
 ap = argparse.ArgumentParser()
 ap.add_argument("--mode", required=True, help="Training mode: finetune/finetune_mnet/transfer/scratch")
+ap.add_argument("--batch_size", type=int, default=64, help="Batch size for training")
+ap.add_argument("--num_epochs", type=int, default=10, help="Number of epochs for training")
+ap.add_argument("--num_classes", type=int, default=11, help="Number of classes for training")
+ap.add_argument("--test_batch_size", type=int, default=1, help="Batch size for testing")
+ap.add_argument("--train_dir", type=str, default="imds_small/train", help="Directory for training images")
+ap.add_argument("--test_dir", type=str, default="imds_small/test", help="Directory for validation images")
 args= vars(ap.parse_args())
 
 # Set training mode
 train_mode=args["mode"]
 
 # Set the train and validation directory paths
-train_directory = 'imds_small/train'
-valid_directory = 'imds_small/test'
+train_directory = args["train_dir"]
+test_directory = args["test_dir"]
 # Set the model save path
 PATH="model.pth" 
 
 # Batch size
-bs = 64 
+bs = args["batch_size"]
+# Test batch size
+test_bs = args["test_batch_size"]
 # Number of epochs
-num_epochs = 10
+num_epochs = args["num_epochs"]
 # Number of classes
-num_classes = 11
+num_classes = args["num_classes"]
 # Number of workers
 num_cpu = multiprocessing.cpu_count()
 
@@ -59,7 +67,7 @@ image_transforms = {
 # Load data from folders
 dataset = {
     'train': datasets.ImageFolder(root=train_directory, transform=image_transforms['train']),
-    'test': datasets.ImageFolder(root=valid_directory, transform=image_transforms['test'])
+    'test': datasets.ImageFolder(root=test_directory, transform=image_transforms['test'])
 }
  
 # Size of train and validation data
@@ -72,7 +80,7 @@ dataset_sizes = {
 dataloaders = {
     'train':data.DataLoader(dataset['train'], batch_size=bs, shuffle=True,
                             num_workers=num_cpu, pin_memory=True, drop_last=True),
-    'test':data.DataLoader(dataset['test'], batch_size=bs, shuffle=True,
+    'test':data.DataLoader(dataset['test'], batch_size=test_bs, shuffle=True,
                             num_workers=num_cpu, pin_memory=True, drop_last=True)
 }
 
@@ -181,7 +189,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=30):
             running_loss = 0.0
             running_corrects = 0
 
-            print(dataloaders[phase])
+            # print(dataloaders[phase])
 
             # Iterate over data.
             for inputs, labels in dataloaders[phase]:
