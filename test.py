@@ -7,7 +7,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 # Paths for image directory and model
-IMDIR=sys.argv[1])
+IMDIR=sys.argv[1]
 MODEL='models/resnet18.pth'
 
 # Load the model for testing
@@ -15,7 +15,7 @@ model = torch.load(MODEL)
 model.eval()
 
 # Class labels for prediction
-class_names=['apple','atm card','cat','banana','bangle','battery','bottle','broom','bulb','calender','camera']
+class_names=sys.argv[2].split(",")
 
 # Retreive 9 random images from directory
 files=Path(IMDIR).resolve().glob('*.*')
