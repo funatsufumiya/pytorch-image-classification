@@ -15,7 +15,7 @@ from matplotlib import pyplot as plt
 
 # Construct argument parser
 ap = argparse.ArgumentParser()
-ap.add_argument("--mode", required=True, help="Training mode: finetune/transfer/scratch")
+ap.add_argument("--mode", required=True, help="Training mode: finetune/finetune_mnet/transfer/scratch")
 args= vars(ap.parse_args())
 
 # Set training mode
@@ -96,6 +96,18 @@ if train_mode=='finetune':
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs,num_classes )
 
+elif train_mode=='finetune_mnet':
+    # Load a pretrained model - MobilenetV2
+    print("\nLoading mobilenetv2 as feature extractor ...\n")
+    model_ft = models.mobilenet_v2(pretrained=True)
+
+    # Modify fc layers to match num_classes
+    num_ftrs=model_ft.classifier[-1].in_features
+    model_ft.classifier=nn.Sequential(
+        nn.Dropout(p=0.2, inplace=False),
+        nn.Linear(in_features=num_ftrs, out_features=num_classes, bias=True)
+        )
+
 elif train_mode=='scratch':
     # Load a custom model - VGG11
     print("\nLoading VGG11 for training from scratch ...\n")
@@ -118,7 +130,10 @@ elif train_mode=='transfer':
     model_ft.classifier=nn.Sequential(
         nn.Dropout(p=0.2, inplace=False),
         nn.Linear(in_features=num_ftrs, out_features=num_classes, bias=True)
-        )    
+        )
+else:
+    print("\nInvalid training mode\n")
+    exit()
 
 # Transfer the model to GPU
 model_ft = model_ft.to(device)
