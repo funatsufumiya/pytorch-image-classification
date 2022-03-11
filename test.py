@@ -7,7 +7,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import argparse
 
-ap = argparse.ArgumentParser()
+ap = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 ap.add_argument("--class_names", required=True, type=str, default="apple,banana,grape", help="class names")
 ap.add_argument("--model_path", type=str, default="models/resnet18.pth", help="Path to model")
 ap.add_argument("--train_dir", type=str, default="imds_small/train", help="Directory for training images")
