@@ -11,6 +11,7 @@ ap = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormat
 ap.add_argument("--class_names", required=True, type=str, default="apple,banana,grape", help="class names")
 ap.add_argument("--model_path", type=str, default="models/resnet18.pth", help="Path to model")
 ap.add_argument("--test_dir", type=str, default="imds_small/test", help="Directory for validation images")
+ap.add_argument("--result_image_path", type=str, default="test_result.png", help="Path to result image")
 args= vars(ap.parse_args())
 
 print("args:",args)
@@ -63,5 +64,5 @@ with torch.no_grad():
          plt.axis('off')
          plt.imshow(img)
     
-    print("Saved test result to test_result.png")
-    plt.savefig('test_result.png')
+    print("Saved test result to", args["result_image_path"])
+    plt.savefig(args["result_image_path"])
