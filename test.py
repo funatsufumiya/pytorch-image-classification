@@ -5,17 +5,27 @@ from torchvision import models, transforms
 from PIL import Image
 from pathlib import Path
 import matplotlib.pyplot as plt
+import argparse
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--class_names", required=True, type=str, default="apple,banana,grape", help="class names")
+ap.add_argument("--model_path", type=str, default="models/resnet18.pth", help="Path to model")
+ap.add_argument("--train_dir", type=str, default="imds_small/train", help="Directory for training images")
+ap.add_argument("--test_dir", type=str, default="imds_small/test", help="Directory for validation images")
+args= vars(ap.parse_args())
+
+print("args:",args)
 
 # Paths for image directory and model
-IMDIR=sys.argv[1]
-MODEL='models/resnet18.pth'
+IMDIR=args["test_dir"]
+MODEL=args["model_path"]
 
 # Load the model for testing
 model = torch.load(MODEL)
 model.eval()
 
 # Class labels for prediction
-class_names=sys.argv[2].split(",")
+class_names=args["class_names"].split(",")
 
 # Retreive 9 random images from directory
 files=Path(IMDIR).resolve().glob('*.*')
