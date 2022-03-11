@@ -180,20 +180,15 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=30):
         # Each epoch has a training and validation phase
         for phase in ['train', 'test']:
             if phase == 'train':
-                print("Training phase:-")
                 model.train()  # Set model to training mode
             else:
-                print("Validation phase:-")
                 model.eval()   # Set model to evaluate mode
 
             running_loss = 0.0
             running_corrects = 0
 
-            # print(dataloaders[phase])
-
             # Iterate over data.
             for inputs, labels in dataloaders[phase]:
-                print(inputs.shape)
                 inputs = inputs.to(device, non_blocking=True)
                 labels = labels.to(device, non_blocking=True)
 
