@@ -106,7 +106,7 @@ if train_mode=='finetune':
 
 elif train_mode=='finetune_mnet':
     # Load a pretrained model - MobilenetV2
-    print("\nLoading mobilenetv2 as feature extractor ...\n")
+    print("\nLoading mobilenetv2 for finetuning ...\n")
     model_ft = models.mobilenet_v2(pretrained=True)
 
     # Modify fc layers to match num_classes
